@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Minha Célula"/>
+<meta name="theme-color" content="#1a3a2a"/>
+<title>🕊️ Minha Célula</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+:root{
+  --bg:#F4F9F6;--card:#fff;--green:#1a3a2a;--green2:#2d6a4f;--green3:#40916c;
+  --mint:#95d5b2;--mint2:#d8f3dc;--gold:#e9c46a;--red:#e63946;--red-bg:#fff0f0;
+  --border:#d8eede;--muted:#7a9e8a;--text:#1a3a2a;--radius:16px;--radius-sm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
+.header{background:var(--green);padding:20px 20px 0;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:var(--green3);border-radius:50%;opacity:0.4}
+.header::after{content:'';position:absolute;right:20px;bottom:-15px;width:60px;height:60px;background:var(--mint);border-radius:50%;opacity:0.2}
+.header h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;position:relative;z-index:1}
+.header h1 span{color:var(--mint)}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.55);margin-top:3px;position:relative;z-index:1}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px;position:relative;z-index:1}
+.user-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.1);border-radius:30px;padding:5px 12px 5px 6px;cursor:pointer}
+.user-pill .av{width:26px;height:26px;border-radius:50%;background:var(--green3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.user-pill .un{font-size:12px;color:#fff;font-weight:500}
+.login-btn{background:var(--green3);border:none;color:#fff;padding:6px 14px;border-radius:30px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+.admin-tag{font-size:10px;background:var(--gold);color:#3d2b00;padding:2px 7px;border-radius:10px;font-weight:700;margin-left:4px}
+.tabs{display:flex;background:var(--green);padding:0 16px 14px;gap:6px;position:sticky;top:0;z-index:10}
+.tab{flex:1;padding:8px 4px;border:1.5px solid rgba(255,255,255,0.2);border-radius:var(--radius-sm);background:none;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.55);font-family:'DM Sans',sans-serif;font-weight:500;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab.active{background:var(--green3);border-color:var(--green3);color:#fff}
+.tab-icon{font-size:16px}
+.panel{display:none;padding:14px 14px 80px}
+.panel.active{display:block}
+.saldo-card{background:var(--green);border-radius:var(--radius);padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
+.saldo-card::before{content:'';position:absolute;right:-10px;bottom:-10px;width:80px;height:80px;background:var(--green3);border-radius:50%;opacity:0.5}
+.saldo-label{font-size:12px;color:rgba(255,255,255,0.6);font-weight:500;text-transform:uppercase;letter-spacing:0.06em}
+.saldo-valor{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#fff;margin:6px 0 2px;position:relative;z-index:1}
+.saldo-valor.negativo{color:#ff8fa3}
+.saldo-sub{font-size:12px;color:rgba(255,255,255,0.55)}
+.saldo-pills{display:flex;gap:8px;margin-top:12px}
+.saldo-pill{background:rgba(255,255,255,0.1);border-radius:20px;padding:5px 12px;font-size:12px;color:#fff;display:flex;align-items:center;gap:5px}
+.saldo-pill.ent{background:rgba(149,213,178,0.2)}
+.saldo-pill.sai{background:rgba(230,57,70,0.2)}
+.action-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.action-btn{padding:12px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.15s}
+.action-btn:active{transform:scale(0.97)}
+.action-btn.entrada{background:var(--mint2);color:var(--green2)}
+.action-btn.saida{background:#ffe5e8;color:var(--red)}
+.action-btn.full{grid-column:1/-1}
+.section-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin:14px 0 8px}
+.trans-row{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:6px;display:flex;align-items:center;gap:11px}
+.trans-row.entrada-row{border-left:3px solid var(--green3)}
+.trans-row.saida-row{border-left:3px solid var(--red)}
+.trans-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.trans-icon.e{background:var(--mint2)}
+.trans-icon.s{background:#ffe5e8}
+.trans-info{flex:1;min-width:0}
+.trans-nome{font-size:13px;font-weight:500;color:var(--text)}
+.trans-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.trans-valor{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;flex-shrink:0}
+.trans-valor.e{color:var(--green3)}
+.trans-valor.s{color:var(--red)}
+.trans-del{background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:0 0 0 4px}
+.filtro-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.filtro-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:12px;color:var(--muted);cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.filtro-btn.active{background:var(--green3);border-color:var(--green3);color:#fff}
+.membro-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.membro-av{width:44px;height:44px;border-radius:50%;background:var(--mint2);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--green2);flex-shrink:0}
+.membro-info{flex:1;min-width:0}
+.membro-nome{font-family:'Syne',sans-serif;font-size:14px;font-weight:700}
+.membro-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.aniv-badge{font-size:11px;background:#fff3cd;color:#856404;padding:2px 8px;border-radius:10px;margin-top:4px;display:inline-block}
+.membro-actions{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{background:none;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:12px}
+.search-box input{flex:1;border:none;outline:none;font-size:14px;font-family:'DM Sans',sans-serif;background:transparent;color:var(--text)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg);border-radius:24px 24px 0 0;padding:24px 20px 36px;width:100%;max-width:430px;transform:translateY(40px);transition:transform 0.25s;max-height:92vh;overflow-y:auto}
+.overlay.open .modal{transform:translateY(0)}
+.modal h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px}
+.modal-close{float:right;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;margin-top:-4px}
+.field{margin-bottom:12px}
+.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--card);color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.field input:focus,.field select:focus{border-color:var(--green3)}
+.field textarea{resize:none;height:70px}
+.tipo-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tipo-btn{padding:10px;border:2px solid var(--border);border-radius:var(--radius-sm);background:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--muted)}
+.tipo-btn.active-ent{border-color:var(--green3);background:var(--mint2);color:var(--green2)}
+.tipo-btn.active-sai{border-color:var(--red);background:#ffe5e8;color:var(--red)}
+.btn-salvar{width:100%;padding:13px;background:var(--green2);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px}
+.pin-display{display:flex;gap:10px;justify-content:center;margin:16px 0 10px}
+.pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--border)}
+.pin-dot.filled{background:var(--green3);border-color:var(--green3)}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pin-key{height:56px;background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:22px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);user-select:none}
+.pin-key:active{background:var(--mint2);transform:scale(0.95)}
+.pin-key.del{font-size:16px;color:var(--muted)}
+.pin-key.zero{grid-column:2}
+.pin-hint{text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px}
+.pin-error{text-align:center;font-size:13px;color:var(--red);min-height:20px;margin-top:6px}
+.empty{text-align:center;padding:36px 20px;color:var(--muted)}
+.empty-icon{font-size:36px;margin-bottom:8px}
+.loading{text-align:center;padding:28px;color:var(--muted)}
+.ldot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green3);margin:0 3px;animation:b 1s infinite}
+.ldot:nth-child(2){animation-delay:.15s}.ldot:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.aniv-hoje{background:linear-gradient(135deg,#fff3cd,#ffeaa7);border:1.5px solid var(--gold);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.aniv-hoje p{font-size:13px;color:#856404;flex:1}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🕊️ Minha <span>Célula</span></h1>
+  <p class="header-sub">Oferta do Lanche • Membros</p>
+  <div class="header-bar">
+    <div style="font-size:11px;color:rgba(255,255,255,0.4)">⬤ Tempo real</div>
+    <div id="user-area"></div>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab active" onclick="showTab('financeiro')"><span class="tab-icon">💰</span>Oferta</button>
+  <button class="tab" onclick="showTab('membros')"><span class="tab-icon">👥</span>Membros</button>
+</div>
+
+<div class="panel active" id="panel-financeiro">
+  <div class="saldo-card">
+    <div class="saldo-label">Saldo atual</div>
+    <div class="saldo-valor" id="saldo-val">R$ 0,00</div>
+    <div class="saldo-sub" id="saldo-sub">Carregando...</div>
+    <div class="saldo-pills">
+      <div class="saldo-pill ent">↑ Entradas: R$ <span id="total-ent">0,00</span></div>
+      <div class="saldo-pill sai">↓ Saídas: R$ <span id="total-sai">0,00</span></div>
+    </div>
+  </div>
+  <div id="action-btns-area" style="display:none">
+    <div class="action-btns">
+      <button class="action-btn entrada" onclick="abrirLancamento('ENTRADA')">➕ Entrada</button>
+      <button class="action-btn saida" onclick="abrirLancamento('SAIDA')">➖ Saída</button>
+    </div>
+  </div>
+  <div class="filtro-row">
+    <button class="filtro-btn active" onclick="setFiltro('TODOS',this)">Todos</button>
+    <button class="filtro-btn" onclick="setFiltro('ENTRADA',this)">Entradas</button>
+    <button class="filtro-btn" onclick="setFiltro('SAIDA',this)">Saídas</button>
+    <button class="filtro-btn" onclick="setFiltro('PIX',this)">PIX</button>
+    <button class="filtro-btn" onclick="setFiltro('CAIXINHA',this)">Caixinha</button>
+  </div>
+  <div class="section-title">Lançamentos</div>
+  <div id="lista-trans"><div class="loading"><span class="ldot"></span><span class="ldot"></span><span class="ldot"></span></div></div>
+</div>
+
+<div class="panel" id="panel-membros">
+  <div id="aniv-banner"></div>
+  <div class="search-box"><span>🔍</span><input type="text" id="busca-membro" placeholder="Buscar membro..." oninput="filtrarMembros()"/></div>
+  <div id="add-membro-btn-area" style="display:none;margin-bottom:12px">
+    <button class="action-btn entrada full" onclick="abrirModalMembro()">➕ Adicionar membro</button>
+  </div>
+  <div id="lista-membros"><div class="loading"><span class="ldot"></span><span class="ldot"></span><span class="ldot"></span></div></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="fecharOverlayFora(event)">
+  <div class="modal"><button class="modal-close" onclick="fecharModal()">×</button><div id="modal-content"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SB="https://squysnnhlscbytdccrqp.supabase.co";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxdXlzbm5obHNjYnl0ZGNjcnFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTIwNDMsImV4cCI6MjA5MTg2ODA0M30.C12qPFiRTNT0uVVDUWsE_bn08VIPQ_77maCIfTvtAI0";
+const H={"Content-Type":"application/json","apikey":KEY,"Authorization":"Bearer "+KEY};
+const TESOUREIRO="JHON";
+
+async function sbGet(t,q=""){try{const r=await fetch(`${SB}/rest/v1/${t}?${q}`,{headers:H});if(!r.ok)throw new Error(r.status);return r.json();}catch{return null;}}
+async function sbPost(t,b){try{const r=await fetch(`${SB}/rest/v1/${t}`,{method:"POST",headers:{...H,"Prefer":"return=minimal"},body:JSON.stringify(b)});return r.ok;}catch{return false;}}
+async function sbPatch(t,q,b){try{const r=await fetch(`${SB}/rest/v1/${t}?${q}`,{method:"PATCH",headers:{...H,"Prefer":"return=minimal"},body:JSON.stringify(b)});return r.ok;}catch{return false;}}
+async function sbDelete(t,q){try{const r=await fetch(`${SB}/rest/v1/${t}?${q}`,{method:"DELETE",headers:H});return r.ok;}catch{return false;}}
+
+let sessao=JSON.parse(sessionStorage.getItem('celula_s')||'null');
+const isTes=()=>sessao?.nome===TESOUREIRO;
+const isLog=()=>!!sessao;
+const salvarS=n=>{sessao={nome:n};sessionStorage.setItem('celula_s',JSON.stringify(sessao));};
+const limparS=()=>{sessao=null;sessionStorage.removeItem('celula_s');};
+
+let transacoes=[],membros=[],filtroAtual='TODOS';
+
+const ini=n=>(n||'?').slice(0,2).toUpperCase();
+function toast(msg,dur=2500){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),dur);}
+const fmtM=v=>'R$ '+Math.abs(v).toFixed(2).replace('.',',');
+const fmtD=d=>{if(!d)return'';const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});};
+
+function showTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['financeiro','membros'][i]===t));
+  document.querySelectorAll('.panel').forEach(el=>el.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  if(t==='membros')renderMembros();
+}
+function renderUserArea(){
+  document.getElementById('action-btns-area').style.display=isTes()?'block':'none';
+  document.getElementById('add-membro-btn-area').style.display=isTes()?'block':'none';
+  const el=document.getElementById('user-area');
+  if(isLog()){
+    el.innerHTML=`<div class="user-pill" onclick="abrirPerfil()"><div class="av">${ini(sessao.nome)}</div><div class="un">${sessao.nome}${isTes()?'<span class="admin-tag">tesoureiro</span>':''}</div></div>`;
+  }else{
+    el.innerHTML=`<button class="login-btn" onclick="abrirLogin()">Entrar</button>`;
+  }
+}
+function abrirModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('overlay').classList.add('open');}
+function fecharModal(){document.getElementById('overlay').classList.remove('open');}
+function fecharOverlayFora(e){if(e.target===document.getElementById('overlay'))fecharModal();}
+
+// LOGIN
+let _pb="",_pm="",_pn="";
+function abrirLogin(){
+  const opts=membros.map(m=>`<option value="${m.nome}">${m.nome}</option>`).join('');
+  abrirModal(`<h2>Entrar</h2>
+    <div class="field"><label>Seu nome</label>
+    <select id="sel-nome" onchange="selecionouNome()">
+      <option value="">-- Escolha --</option>
+      ${opts}<option value="JHON">JHON (tesoureiro)</option>
+    </select></div>
+    <div id="pin-area" style="display:none"></div>`);
+}
+async function selecionouNome(){
+  const nome=document.getElementById('sel-nome').value;if(!nome)return;
+  _pn=nome;_pb="";
+  const d=await sbGet('celula_usuarios',`nome=eq.${encodeURIComponent(nome)}&select=id`);
+  _pm=d&&d.length?"login":"cadastro";
+  mostrarPin(_pm==="login"?"Digite seu PIN":"Crie um PIN de 4 dígitos");
+}
+function mostrarPin(hint){
+  document.getElementById('pin-area').style.display='block';
+  document.getElementById('pin-area').innerHTML=`
+    <div class="pin-hint">${hint}</div>
+    <div class="pin-display">${[0,1,2,3].map(i=>`<div class="pin-dot" id="pd${i}"></div>`).join('')}</div>
+    <div class="pin-grid">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pin-key" onclick="pk('${n}')">${n}</button>`).join('')}
+      <button class="pin-key del" onclick="pdel()">⌫</button>
+      <button class="pin-key zero" onclick="pk('0')">0</button>
+    </div><div class="pin-error" id="pe"></div>`;
+}
+function pk(n){if(_pb.length>=4)return;_pb+=n;upd();if(_pb.length===4)setTimeout(confirmarPin,200);}
+function pdel(){_pb=_pb.slice(0,-1);upd();}
+function upd(){for(let i=0;i<4;i++)document.getElementById('pd'+i)?.classList.toggle('filled',i<_pb.length);}
+async function confirmarPin(){
+  if(_pm==="cadastro"){
+    const ok=await sbPost('celula_usuarios',{nome:_pn,pin:_pb});
+    if(ok){salvarS(_pn);fecharModal();toast(`✅ Bem-vindo, ${_pn}!`);renderUserArea();}
+    else{document.getElementById('pe').textContent="Erro ao criar PIN. Tente novamente.";_pb="";upd();}
+  }else{
+    const d=await sbGet('celula_usuarios',`nome=eq.${encodeURIComponent(_pn)}&pin=eq.${_pb}&select=id`);
+    if(d&&d.length){salvarS(_pn);fecharModal();toast(`✅ Bem-vindo, ${_pn}!`);renderUserArea();}
+    else{document.getElementById('pe').textContent="PIN incorreto.";_pb="";upd();}
+  }
+}
+function abrirPerfil(){
+  abrirModal(`<h2>${sessao.nome}${isTes()?'<span class="admin-tag" style="margin-left:8px">tesoureiro</span>':''}</h2>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Logado neste dispositivo.</p>
+    <button onclick="logout()" style="width:100%;padding:12px;background:#ffe5e8;color:var(--red);border:1.5px solid #f5b7b1;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif">Sair da conta</button>`);
+}
+function logout(){limparS();fecharModal();renderUserArea();toast("Sessão encerrada.");}
+
+// FINANCEIRO
+async function carregarTransacoes(){
+  const d=await sbGet('celula_financeiro','order=data.desc,criado_em.desc&select=*');
+  transacoes=d||[];renderTransacoes();atualizarSaldo();
+}
+function atualizarSaldo(){
+  const ent=transacoes.filter(t=>t.tipo==='ENTRADA').reduce((s,t)=>s+parseFloat(t.valor),0);
+  const sai=transacoes.filter(t=>t.tipo==='SAIDA').reduce((s,t)=>s+parseFloat(t.valor),0);
+  const saldo=ent-sai;
+  const el=document.getElementById('saldo-val');
+  el.textContent=fmtM(saldo);el.className='saldo-valor'+(saldo<0?' negativo':'');
+  document.getElementById('saldo-sub').textContent=saldo>=0?'Caixa positivo ✓':'⚠️ Saldo negativo';
+  document.getElementById('total-ent').textContent=ent.toFixed(2).replace('.',',');
+  document.getElementById('total-sai').textContent=sai.toFixed(2).replace('.',',');
+}
+function setFiltro(f,btn){
+  filtroAtual=f;
+  document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderTransacoes();
+}
+function renderTransacoes(){
+  let lista=transacoes;
+  if(filtroAtual==='ENTRADA')lista=lista.filter(t=>t.tipo==='ENTRADA');
+  else if(filtroAtual==='SAIDA')lista=lista.filter(t=>t.tipo==='SAIDA');
+  else if(filtroAtual==='PIX')lista=lista.filter(t=>t.local==='PIX');
+  else if(filtroAtual==='CAIXINHA')lista=lista.filter(t=>t.local==='CAIXINHA');
+  const el=document.getElementById('lista-trans');
+  if(!lista.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📭</div><p>Nenhum lançamento ainda</p></div>`;return;}
+  el.innerHTML='';
+  lista.forEach(t=>{
+    const isE=t.tipo==='ENTRADA';
+    const row=document.createElement('div');row.className=`trans-row ${isE?'entrada-row':'saida-row'}`;
+    row.innerHTML=`
+      <div class="trans-icon ${isE?'e':'s'}">${isE?'💚':'🔴'}</div>
+      <div class="trans-info">
+        <div class="trans-nome">${t.nome||'—'} <span style="font-size:10px;color:var(--muted)">${t.local}</span></div>
+        <div class="trans-sub">${fmtD(t.data)}${t.observacao?' · '+t.observacao:''}</div>
+      </div>
+      <div class="trans-valor ${isE?'e':'s'}">${isE?'+':'-'}${fmtM(t.valor)}</div>
+      ${isTes()?`<button class="trans-del" onclick="deletarTrans('${t.id}')">🗑</button>`:''}`;
+    el.appendChild(row);
+  });
+}
+let _tipoL='ENTRADA';
+function abrirLancamento(tipo){
+  if(!isTes()){toast("Sem permissão.");return;}
+  _tipoL=tipo;
+  const hoje=new Date().toISOString().slice(0,10);
+  abrirModal(`<h2>${tipo==='ENTRADA'?'➕ Nova Entrada':'➖ Nova Saída'}</h2>
+    <div class="field"><label>Tipo</label>
+    <div class="tipo-btns">
+      <button class="tipo-btn ${tipo==='ENTRADA'?'active-ent':''}" onclick="setTipo('ENTRADA',this)">➕ Entrada</button>
+      <button class="tipo-btn ${tipo==='SAIDA'?'active-sai':''}" onclick="setTipo('SAIDA',this)">➖ Saída</button>
+    </div></div>
+    <div class="field"><label>Data</label><input type="date" id="l-data" value="${hoje}"/></div>
+    <div class="field"><label>Forma</label>
+    <select id="l-local"><option value="PIX">PIX</option><option value="CAIXINHA">Caixinha de oferta</option></select></div>
+    <div class="field"><label>Nome (quem pagou / destino)</label><input type="text" id="l-nome" placeholder="Ex: Mauricio"/></div>
+    <div class="field"><label>Valor (R$)</label><input type="number" id="l-valor" min="0.01" step="0.01" placeholder="0,00" inputmode="decimal"/></div>
+    <div class="field"><label>Observação</label><textarea id="l-obs" placeholder="Opcional..."></textarea></div>
+    <button class="btn-salvar" onclick="salvarLancamento()">Salvar lançamento</button>`);
+}
+function setTipo(t,btn){
+  _tipoL=t;
+  document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.remove('active-ent','active-sai'));
+  btn.classList.add(t==='ENTRADA'?'active-ent':'active-sai');
+}
+async function salvarLancamento(){
+  const data=document.getElementById('l-data').value;
+  const local=document.getElementById('l-local').value;
+  const nome=document.getElementById('l-nome').value.trim().toUpperCase();
+  const valor=parseFloat(document.getElementById('l-valor').value);
+  const obs=document.getElementById('l-obs').value.trim();
+  if(!data||!valor||valor<=0){toast("Preencha data e valor!");return;}
+  const ok=await sbPost('celula_financeiro',{data,tipo:_tipoL,local,nome:nome||null,valor,observacao:obs||null});
+  if(ok){fecharModal();toast("✅ Lançamento salvo!");carregarTransacoes();}
+  else toast("Erro ao salvar.");
+}
+async function deletarTrans(id){
+  if(!confirm("Excluir este lançamento?"))return;
+  await sbDelete('celula_financeiro',`id=eq.${id}`);
+  toast("Excluído!");carregarTransacoes();
+}
+
+// MEMBROS
+async function carregarMembros(){
+  const d=await sbGet('celula_membros','order=nome.asc&ativo=eq.true&select=*');
+  membros=d||[];renderMembros();verificarAnivs();
+}
+function filtrarMembros(){renderMembros(document.getElementById('busca-membro').value);}
+function renderMembros(busca=''){
+  const lista=busca?membros.filter(m=>m.nome.toLowerCase().includes(busca.toLowerCase())):membros;
+  const el=document.getElementById('lista-membros');
+  if(!lista.length){el.innerHTML=`<div class="empty"><div class="empty-icon">👥</div><p>${busca?'Nenhum resultado':'Nenhum membro cadastrado'}</p></div>`;return;}
+  el.innerHTML='';
+  const hoje=new Date();
+  lista.forEach(m=>{
+    const card=document.createElement('div');card.className='membro-card';
+    let anivTxt='';
+    if(m.aniversario){
+      const a=new Date(m.aniversario+'T12:00:00');
+      const eh=a.getDate()===hoje.getDate()&&a.getMonth()===hoje.getMonth();
+      anivTxt=`<div class="aniv-badge">${eh?'🎂 Aniversário HOJE! ':'🎂 '}${fmtD(m.aniversario)}</div>`;
+    }
+    card.innerHTML=`
+      <div class="membro-av">${ini(m.nome)}</div>
+      <div class="membro-info">
+        <div class="membro-nome">${m.nome}</div>
+        <div class="membro-sub">${m.telefone||'Sem telefone'}</div>
+        ${anivTxt}
+      </div>
+      ${isTes()?`<div class="membro-actions">
+        <button class="icon-btn" onclick="editarMembro('${m.id}')">✏️</button>
+        <button class="icon-btn" onclick="deletarMembro('${m.id}','${m.nome}')">🗑</button>
+      </div>`:''}`;
+    el.appendChild(card);
+  });
+}
+function verificarAnivs(){
+  const hoje=new Date();
+  const banner=document.getElementById('aniv-banner');
+  const anivHoje=membros.filter(m=>{
+    if(!m.aniversario)return false;
+    const a=new Date(m.aniversario+'T12:00:00');
+    return a.getDate()===hoje.getDate()&&a.getMonth()===hoje.getMonth();
+  });
+  if(anivHoje.length){
+    banner.innerHTML=`<div class="aniv-hoje"><span style="font-size:28px">🎂</span><p><b>Aniversário hoje!</b><br>${anivHoje.map(m=>m.nome).join(' • ')}</p></div>`;
+  }else banner.innerHTML='';
+}
+function abrirModalMembro(m=null){
+  abrirModal(`<h2>${m?'✏️ Editar membro':'➕ Novo membro'}</h2>
+    <div class="field"><label>Nome *</label><input type="text" id="m-nome" value="${m?.nome||''}" placeholder="Nome completo"/></div>
+    <div class="field"><label>Telefone</label><input type="tel" id="m-tel" value="${m?.telefone||''}" placeholder="(00) 00000-0000"/></div>
+    <div class="field"><label>Data de aniversário</label><input type="date" id="m-aniv" value="${m?.aniversario||''}"/></div>
+    <button class="btn-salvar" onclick="salvarMembro('${m?.id||''}')">Salvar</button>`);
+}
+async function salvarMembro(id){
+  const nome=document.getElementById('m-nome').value.trim().toUpperCase();
+  const tel=document.getElementById('m-tel').value.trim();
+  const aniv=document.getElementById('m-aniv').value;
+  if(!nome){toast("Digite o nome!");return;}
+  if(id){
+    await sbPatch('celula_membros',`id=eq.${id}`,{nome,telefone:tel||null,aniversario:aniv||null});
+    toast("✅ Atualizado!");
+  }else{
+    await sbPost('celula_membros',{nome,telefone:tel||null,aniversario:aniv||null});
+    toast("✅ Membro adicionado!");
+  }
+  fecharModal();carregarMembros();
+}
+function editarMembro(id){const m=membros.find(x=>x.id===id);if(m)abrirModalMembro(m);}
+async function deletarMembro(id,nome){
+  if(!confirm(`Remover ${nome}?`))return;
+  await sbDelete('celula_membros',`id=eq.${id}`);
+  toast("Removido.");carregarMembros();
+}
+
+// INIT
+renderUserArea();
+carregarTransacoes();
+carregarMembros();
+setInterval(()=>{if(document.getElementById('panel-financeiro').classList.contains('active'))carregarTransacoes();},30000);
+</script>
+</body>
+</html>
